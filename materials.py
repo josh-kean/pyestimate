@@ -10,13 +10,22 @@ class StandardFunctions:
         self.diameter = diameter
         self.totalCost = totalCost
 
-    def materialCost(self):
-        return self.quantity*self.cost
+    #this function takes the price per unit and multiplies the number of items
+    def materialCost(self, augment=1):
+        return self.quantity*self.cost*augment
 
-    def laborCost(self, labor):
-        self.labor = labor
-        return self.quantity*self.labor
+    #this function takes the quantity of tasks to do by the price per tasks
+    #and returns the cost to perform the task
+    #it also allows an option to increase or decrease cost by a desired percent
+    def laborCostQuantity(self, labor, augment=1):
+        return self.quantity*labor*augment
 
+    #this function multiplies the labor cost/hour by the time it takes to
+    #install one unit by the number of units
+    def laborCostTime(self, time, labor, augment=1):
+        return time*labor*augment*self.quantity
+
+    #need to change this function to work for pipes and complicated reducers
     def weldInches(self):
         return 3.14*self.quantity*self.diameter
 
@@ -28,7 +37,18 @@ class Pipe(StandardFunctions):
     def weldInches(self):
         return StandardFunctions.weldInches(self)
 
-class Labor:
+    def laborCostQuantity(self, labor, augment=1):
+        # quantity = self.quantity
+        self.labor = labor
+        return StandardFunctions.laborCost(self, self.labor, augment )
 
-    def laborCost(self, labor):
-        return StandardFunctions.laborCost(self, labor)
+class Fitting(StandardFunctions):
+    def materialCost(self):
+        return StandardFunctions.materialCost(self)
+
+    def weldInches(self):
+        return StandardFunctions.weldInches(self)
+
+    def laborCostQuantity(self, labor, augment=1):
+        self.labor = labor
+        return StandardFunctions.laborCostQuantity(self.labor, augment)
